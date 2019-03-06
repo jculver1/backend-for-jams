@@ -8,8 +8,17 @@ const knex= require('./knex');
 app.use(cors())
 app.use(parser.json())
 
+app.get('/sellers', (req, res)=> {
+  knex('sellers')
+  .then((rows) => {
+    res.send(rows);
+  })
+  .catch((err) => {
+    next(err);
+  });
+})
+
 app.get('/sellers/:char', (req, res)=> {
-  //cosnt sellersName = name.charAt(0).toUpperCase() + name.slice(1)
   knex('sellers').where('sellers.name', 'like', `${(req.params.char).charAt(0).toUpperCase()}%`)
   .then((rows) => {
     res.send(rows);
