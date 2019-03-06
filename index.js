@@ -30,28 +30,35 @@ app.get('/markets', (req, res) => {
   });
 })
 
+app.get('/ingredients', (req, res) => {
+  knex('items')
+  .then((rows) => {
+    res.send(rows);
+  })
+  .catch((err) => {
+    next(err);
+  });
+})
 
-    app.get('/ingredients/:char', (req, res) => {
-        return knex('items').where('items.name', 'like', `${req.params.char}%`)
-        .returning('id', 'name')
-        .then(items => {
-            const nestedStores = items.map(item =>{
-                return knex('menu').join('sellers', 'menu.stall_id', 'sellers.id').where('menu.item_id', item.item_id)
-                .then(stores => {
-                    item.stores = stores
-                    return item
-                })
-            }) 
-          return Promise.all(nestedStores)
-        })
-          .then((rows) => {
-            res.send(rows);
-          })
-          .catch((err) => {
-            next(err);
-          });
-        })
-
-
+app.get('/ingredients/:char', (req, res) => {
+    return knex('items').where('items.name', 'like', `${req.params.char}%`)
+    .returning('id', 'name')
+    .then(items => {
+        const nestedStores = items.map(item =>{
+            return knex('menu').join('sellers', 'menu.stall_id', 'sellers.id').where('menu.item_id', item.item_id)
+            .then(stores => {
+                item.stores = stores
+                return item
+            })
+        }) 
+      return Promise.all(nestedStores)
+    })
+      .then((rows) => {
+        res.send(rows);
+      })
+      .catch((err) => {
+        next(err);
+      });
+    })
 
 app.listen(port, () => console.log(`Example app listening on port ${port}! Yay SQL!`))
