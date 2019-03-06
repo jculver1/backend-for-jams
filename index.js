@@ -8,30 +8,28 @@ const knex= require('./knex');
 app.use(cors())
 app.use(parser.json())
 
+
 app.get('/markets', (req, res) => {
-    knex('markets').select('markets.name', 'sellers.name')
-    .join('sellers', 'sellers.market_id', 'markets.id')
-    .then((rows) => {
-      res.send(rows);
+  return knex('markets')
+  .returning('id', 'name')
+  .then(items => {
+    const nestedShops = items.map(item => {
+      return knex('sellers').where('sellers.market_id', item.id)
+      .then(stores => {
+        item.stores = stores
+        return item
     })
-    .catch((err) => {
-      next(err);
-    });
+    })
+    return Promise.all(nestedShops)
+  })
+  .then((rows) => {
+    res.send(rows);
+  })
+  .catch((err) => {
+    next(err);
+  });
 })
 
-// app.get('/ingredients/:char', (req, res) => {
-//     return knex('items').where('items.name', 'like', `${req.params.char}%`)
-//     .returning('id')
-//     .then((responce) => {
-//        return knex.select('*').from('menu').join('sellers', 'menu.stall_id', 'sellers.id').where('menu.item_id', responce[0].item_id)
-//     })
-//     .then((rows) => {
-//         res.send(rows);
-//     })
-//     .catch((err) => {
-//         next(err);
-//       })
-//     })
 
     app.get('/ingredients/:char', (req, res) => {
         return knex('items').where('items.name', 'like', `${req.params.char}%`)
@@ -52,7 +50,6 @@ app.get('/markets', (req, res) => {
             next(err);
           });
         })
-    
 
 
 app.get('/business/:char', (req, res) => {
