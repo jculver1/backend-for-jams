@@ -42,25 +42,15 @@ app.get('/markets', (req, res) => {
                     return item
                 })
             }) 
-            return Promise.all(nestedStores)
-        }).then((rows) => {
+          return Promise.all(nestedStores)
+        })
+          .then((rows) => {
             res.send(rows);
           })
           .catch((err) => {
             next(err);
           });
         })
-
-
-app.get('/business/:char', (req, res) => {
-    knex('sellers').join('markets', '')
-    .then((rows) => {
-      res.send(rows);
-    })
-    .catch((err) => {
-      next(err);
-    });
-})
 
 
 
