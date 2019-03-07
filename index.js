@@ -9,9 +9,6 @@ require('dotenv').config()
 app.use(cors())
 app.use(parser.json())
 
-
-
-
 // app.get('/sellers', (req, res)=>{
 //   return knex('sellers').returning('id')
 //   .then(booths => {
@@ -31,6 +28,8 @@ app.use(parser.json())
 //     next(err);
 //   });
 // })
+
+
 
 app.get('/sellers/:char', (req, res)=> {
   knex('sellers').where('sellers.name', 'like', `${(req.params.char).charAt(0).toUpperCase()}%`)
