@@ -1,12 +1,15 @@
 const express = require('express')
 const app = express()
-const port = 3001
+const port = process.env.PORT || 3003
 var cors = require('cors')
 const parser = require('body-parser')
 const knex= require('./knex');
+require('dotenv').config()
 
 app.use(cors())
 app.use(parser.json())
+
+
 
 
 // app.get('/sellers', (req, res)=>{
