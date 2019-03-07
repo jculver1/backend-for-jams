@@ -8,15 +8,26 @@ const knex= require('./knex');
 app.use(cors())
 app.use(parser.json())
 
-app.get('/sellers', (req, res)=> {
-  knex('sellers')
-  .then((rows) => {
-    res.send(rows);
-  })
-  .catch((err) => {
-    next(err);
-  });
-})
+
+// app.get('/sellers', (req, res)=>{
+//   return knex('sellers').returning('id')
+//   .then(booths => {
+//     const nestedMenu = booths.map(booth => {
+//       return knex('menu').join('items', 'items.item_id', 'menu.item_id').where(booth.id, 'menu.stall_id')
+//       .then(ingredients => {
+//         booth.ingredient = ingredients
+//         return booth
+//       })
+//     })
+//     return Promise.all(nestedMenu)
+//   })
+//   .then((rows) => {
+//     res.send(rows);
+//   })
+//   .catch((err) => {
+//     next(err);
+//   });
+// })
 
 app.get('/sellers/:char', (req, res)=> {
   knex('sellers').where('sellers.name', 'like', `${(req.params.char).charAt(0).toUpperCase()}%`)
@@ -48,6 +59,7 @@ app.get('/markets', (req, res) => {
     next(err);
   });
 })
+
 
 app.get('/ingredients', (req, res) => {
   knex('items')
